@@ -5,18 +5,26 @@ let browser, page;
 beforeEach(async () => {
   browser = await puppeteer.launch({
     headless: false,
-  })
+  });
   // new pages are tabs in a browser
   page = await browser.newPage();
-  await page.goto('http://localhost:3000/');
+  await page.goto("http://localhost:3000/");
 });
 
 afterEach(async () => {
-  await browser.close()
-})
+  await browser.close();
+});
 
-test('We can launch a browser', async () => {
-  const text = await page.$eval('a.brand-logo', el => el.innerHTML);
+test("the header has the correct text", async () => {
+  const text = await page.$eval("a.brand-logo", (el) => el.innerHTML);
+
+  expect(text).toEqual("Blogster");
+});
+
+test("clicking login starts oath flow", async () => {
+  await page.click(".right a");
   
-  expect(text).toEqual('Blogster')
-})
+  const url = await page.url()
+  
+  expect(url).toMatch(/accounts\.google\.com/);
+});
