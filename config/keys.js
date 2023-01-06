@@ -5,6 +5,8 @@
  * - In Development: Pull the keys values defined in the .env root of the project for development.
  */
 
+require('dotenv').config()
+
 module.exports = {
   googleClientID: process.env.GOOGLE_CLIENT_ID,
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,

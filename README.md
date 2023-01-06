@@ -44,3 +44,23 @@ Use Buffer to decode the base64 string that is the session key
 ```
 Buffer.from(session, 'base64).toString('utf8')
 ```
+
+We can then use the keygrip module to look at how each response is `signed` using our cookie key.
+
+```
+const Keygrip = require("keygrip")
+
+const keygrip = new Keygrip(['insertKeyHere'])
+```
+
+And then we can use the keygrip module to sign our session and then compare the signed version to the cookie signature we recieved as a response!
+
+```
+keygrip.sign('session=' + session)
+```
+
+But the more appropriate use of this would be to use the key provided and the keygrip module to verify that it has not been tampered with.
+
+```
+keygrip.verify('sesion=' + session, 'insertValuefromKeygrip.sign') //should result in true
+```

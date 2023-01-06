@@ -6,7 +6,7 @@ const mongoose = require('mongoose')
 const cookieSession = require('cookie-session')
 const passport = require('passport')
 const bodyParser = require('body-parser')
-const { mongoURI, cookieKey } = require('@config/keys')
+const { mongoURI, cookieKey } = require("./config/keys");
 const path = require('path')
 
 // DB and Passport
