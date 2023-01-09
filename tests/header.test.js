@@ -1,4 +1,6 @@
 const puppeteer = require("puppeteer");
+const sessionFactory = require("./factories/sessionFactory.js");
+const userFactory = require("./factories/userFactory");
 
 let browser, page;
 
@@ -32,31 +34,20 @@ test("clicking login starts oath flow", async () => {
 });
 
 // 003 - Testing to See if When Logged in, Check Different Header
-test.only("When signed in, shows logout button", async () => {
-  const id = "63b7043ec03b2f7e8c30236b";
+test("When signed in, shows logout button", async () => {
+  // const id = "63b7043ec03b2f7e8c30236b";
+  const user = await userFactory();
+  const { session, sig } = sessionFactory(user);
 
-  const Buffer = require("safe-buffer").Buffer;
-  const sessionObject = {
-    passport: {
-      user: id,
-    },
-  };
-  const sessionString = Buffer.from(JSON.stringify(sessionObject)).toString(
-    "base64"
+  await page.setCookie(
+    { name: "express:sess", value: session },
+    { name: "express:sess.sig", value: sig }
   );
-
-  const Keygrip = require("keygrip");
-  const keys = require("../config/keys");
-
-  const keygrip = new Keygrip([keys.cookieKey]);
-  const sig = keygrip.sign('express:sess=' + sessionString);
-
-  await page.setCookie({ name: 'express:sess', value: sessionString }, { name: 'express:sess.sig', value: sig });
   // refresh the page to simulate having the cookies set from the OAuth
-  await page.goto('http://localhost:3000/')
+  await page.goto("http://localhost:3000/");
   await page.waitFor('a[href="/auth/logout"]');
-  
-  const text = await page.$eval('a[href="/auth/logout"]', el => el.innerHTML);
-  
-  expect(text).toEqual('Logout')
+
+  const text = await page.$eval('a[href="/auth/logout"]', (el) => el.innerHTML);
+
+  expect(text).toEqual("Logout");
 });

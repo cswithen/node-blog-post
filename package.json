@@ -16,6 +16,10 @@
     "@routes": "./routes",
     "@services": "./services"
   },
+  "jest": {
+    "setupFilesAfterEnv": ["./tests/setup.js"],
+    "testEnvironment": "node"
+  },
   "scripts": {
     "start": "node index.js",
     "server": "nodemon index.js",

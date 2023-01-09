@@ -23,6 +23,7 @@ const setupBlogRoutes = require('@routes/blogRoutes')
 const PORT = process.env.PORT
 mongoose.Promise = global.Promise
 mongoose.connect(mongoURI, { useNewUrlParser: true })
+
 const app = express()
 
 // Server middleware
