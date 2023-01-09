@@ -50,11 +50,13 @@ test.only("When signed in, shows logout button", async () => {
 
   const keygrip = new Keygrip([keys.cookieKey]);
   const sig = keygrip.sign('express:sess=' + sessionString);
-  
-  console.log(sessionString)
 
   await page.setCookie({ name: 'express:sess', value: sessionString }, { name: 'express:sess.sig', value: sig });
   // refresh the page to simulate having the cookies set from the OAuth
   await page.goto('http://localhost:3000/')
+  await page.waitFor('a[href="/auth/logout"]');
   
+  const text = await page.$eval('a[href="/auth/logout"]', el => el.innerHTML);
+  
+  expect(text).toEqual('Logout')
 });
