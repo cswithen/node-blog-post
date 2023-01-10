@@ -1,20 +1,16 @@
-const puppeteer = require("puppeteer");
-const sessionFactory = require("./factories/sessionFactory.js");
-const userFactory = require("./factories/userFactory");
+const Page = require("./helpers/page");
 
-let browser, page;
+
+
+let page;
 
 beforeEach(async () => {
-  browser = await puppeteer.launch({
-    headless: false,
-  });
-  // new pages are tabs in a browser
-  page = await browser.newPage();
+  page = await Page.build();
   await page.goto("http://localhost:3000/");
 });
 
 afterEach(async () => {
-  await browser.close();
+  await page.close();
 });
 
 // 001 - Testing if the Header is Correct
@@ -35,17 +31,7 @@ test("clicking login starts oath flow", async () => {
 
 // 003 - Testing to See if When Logged in, Check Different Header
 test("When signed in, shows logout button", async () => {
-  // const id = "63b7043ec03b2f7e8c30236b";
-  const user = await userFactory();
-  const { session, sig } = sessionFactory(user);
-
-  await page.setCookie(
-    { name: "express:sess", value: session },
-    { name: "express:sess.sig", value: sig }
-  );
-  // refresh the page to simulate having the cookies set from the OAuth
-  await page.goto("http://localhost:3000/");
-  await page.waitFor('a[href="/auth/logout"]');
+  await page.login();
 
   const text = await page.$eval('a[href="/auth/logout"]', (el) => el.innerHTML);
 
