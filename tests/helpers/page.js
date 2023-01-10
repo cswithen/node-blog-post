@@ -38,6 +38,32 @@ class CustomPage {
   async getContentsOf(selector) {
     return this.page.$eval(selector, (el) => el.innerHTML);
   }
+
+  request(path, method, data) {
+    return this.page.evaluate(
+      (_path, _method, _data) => {
+        return fetch(_path, {
+          method: _method,
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(_data),
+        }).then((res) => res.json());
+      },
+      path,
+      method,
+      data
+    );
+  }
+
+  executeRequests(actions) {
+    return Promise.all(
+      actions.map(({ path, method, data }) => {
+        return this.request(path, method, data);
+      })
+    );
+  }
 }
 
 module.exports = CustomPage;
