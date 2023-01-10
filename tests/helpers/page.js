@@ -21,22 +21,22 @@ class CustomPage {
   constructor(page) {
     this.page = page;
   }
-  
-  async login () {
+
+  async login() {
     const user = await userFactory();
     const { session, sig } = sessionFactory(user);
-  
+
     await this.page.setCookie(
-      { name: "express:sess", value: session },
-      { name: "express:sess.sig", value: sig }
+      { url: "http://localhost:3000/", name: "express:sess", value: session },
+      { url: "http://localhost:3000/", name: "express:sess.sig", value: sig }
     );
     // refresh the page to simulate having the cookies set from the OAuth
-    await this.page.goto("http://localhost:3000/");
+    await this.page.goto("http://localhost:3000/blogs");
     await this.page.waitFor('a[href="/auth/logout"]');
   }
-  
+
   async getContentsOf(selector) {
-    return this.page.$eval(selector, el => el.innerHTML);
+    return this.page.$eval(selector, (el) => el.innerHTML);
   }
 }
 
