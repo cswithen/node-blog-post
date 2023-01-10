@@ -39,23 +39,11 @@ class CustomPage {
     return this.page.$eval(selector, (el) => el.innerHTML);
   }
 
-  get(path) {
-    return this.page.evaluate((_path) => {
-      return fetch(_path, {
-        method: "GET",
-        credentials: "same-origin",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }).then((res) => res.json());
-    }, path);
-  }
-
-  post(path, data) {
+  request(path, method, data) {
     return this.page.evaluate(
-      (_path, _data) => {
+      (_path, _method, _data) => {
         return fetch(_path, {
-          method: "POST",
+          method: _method,
           credentials: "same-origin",
           headers: {
             "Content-Type": "application/json",
@@ -64,7 +52,16 @@ class CustomPage {
         }).then((res) => res.json());
       },
       path,
+      method,
       data
+    );
+  }
+
+  executeRequests(actions) {
+    return Promise.all(
+      actions.map(({ path, method, data }) => {
+        return this.request(path, method, data);
+      })
     );
   }
 }
