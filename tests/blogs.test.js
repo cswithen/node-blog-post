@@ -37,14 +37,14 @@ describe("When logged in", () => {
     });
 
     test("Submititng then saving adds blog to index page", async () => {
-      await page.click('button.green');
-      await page.waitFor('.card')
-      
+      await page.click("button.green");
+      await page.waitFor(".card");
+
       const title = await page.getContentsOf(".card-title");
       const content = await page.getContentsOf("p");
-      
-      expect(title).toEqual("My Title")
-      expect(content).toEqual("My Content")
+
+      expect(title).toEqual("My Title");
+      expect(content).toEqual("My Content");
     });
   });
 
@@ -60,5 +60,22 @@ describe("When logged in", () => {
       expect(titleError).toEqual("You must provide a value");
       expect(contentError).toEqual("You must provide a value");
     });
+  });
+});
+
+describe("User is not logged in", () => {
+  test("User cannot create blog posts", async () => {
+    const result = await page.evaluate(() => {
+      return fetch("/api/blogs", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title: "My Title", content: "My Content" }),
+      }).then((res) => res.json());
+    });
+
+    expect(result).toEqual({ error: "Login required" });
   });
 });
