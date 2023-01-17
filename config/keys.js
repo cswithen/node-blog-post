@@ -7,10 +7,21 @@
 
 require('dotenv').config()
 
-module.exports = {
-  googleClientID: process.env.GOOGLE_CLIENT_ID,
-  googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  mongoURI: process.env.MONGODB_URI,
-  cookieKey: process.env.COOKIE_KEY,
-  port: process.env.PORT
+if (process.env.NODE_ENV === 'ci') {
+  module.exports = {
+    googleClientID: process.env.GOOGLE_CLIENT_ID,
+    googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    mongoURI: 'mongodb://127.0.0.1:27017/blogs_ci',
+    cookieKey: process.env.COOKIE_KEY,
+    redisUrl: process.env.redusUrl
+  }
+} else {
+  module.exports = {
+    googleClientID: process.env.GOOGLE_CLIENT_ID,
+    googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    mongoURI: process.env.MONGODB_URI,
+    cookieKey: process.env.COOKIE_KEY,
+    port: process.env.PORT,
+    redisUrl: process.env.redusUrl
+  }
 }
